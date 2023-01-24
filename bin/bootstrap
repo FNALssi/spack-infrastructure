@@ -9,7 +9,10 @@ spackver=${3:-v0.17.1.fermi}
 mkdir -p $dest/spack-infrastructure/$ver
 cd $dest
 
-git clone https://github.com/marcmengel/spack-infrastructure.git spack-infrastructure/$ver/NULL/
+until git clone https://github.com/marcmengel/spack-infrastructure.git spack-infrastructure/$ver/NULL/
+do
+    rm -rf 
+done
 
 PATH=$dest/spack-infrastructure/$ver/NULL/bin:$PATH
 

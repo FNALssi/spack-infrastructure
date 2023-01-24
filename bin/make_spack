@@ -13,7 +13,22 @@ esac
 
 binary_cache=https://spack-cache-1.fnal.gov/binaries/
 
+retries=0
+retry_check() {
+   # don't let things retry forever...
+   retries=$((retries + 1))
+   if [ $retries -gt 10 ] 
+   then
+       echo "Too many retries in make_spack, exiting."
+       exit 2
+   fi
+}
+
 install_latest() {
+  retries=0
+  until spack find $pkg $plat
+  do
+    retry_check
     pkg="$1"
     if $use_buildcache
     then 
@@ -24,6 +39,7 @@ install_latest() {
     else
         spack -k install "$pkg $plat"
     fi
+  done
 }
 
 #
@@ -49,7 +65,12 @@ bootstrap_patchelf() {
     export pdir
     mkdir $pdir
     PATH="$pdir:$PATH"
-    wget https://spack-cache-1.fnal.gov/binaries/bootstrap/patchelf.linux-scientific7-x86_64
+    retries=0
+    until wget https://spack-cache-1.fnal.gov/binaries/bootstrap/patchelf.linux-scientific7-x86_64
+    do
+       retry_check
+       rm patchelf.linux-scientific7-x86_64
+    done
     mv patchelf.linux-scientific7-x86_64 $pdir/patchelf
 
     chmod +x $pdir/patchelf
@@ -85,10 +106,19 @@ bootstrap_spack() {
 }
 
 add_recipe_repos() {
-    git clone https://github.com/marcmengel/fnal_art.git $SPACK_ROOT/var/spack/repos/fnal_art
+    retries=0
+    until git clone https://github.com/marcmengel/fnal_art.git $SPACK_ROOT/var/spack/repos/fnal_art
+    do
+       retry_check()
+       rm -rf $SPACK_ROOT/var/spack/repos/fnal_art
+    done
     spack repo add --scope=site $SPACK_ROOT/var/spack/repos/fnal_art
 
-    git clone https://github.com/marcmengel/scd_recipes.git $SPACK_ROOT/var/spack/repos/scd_recipes
+    until git clone https://github.com/marcmengel/scd_recipes.git $SPACK_ROOT/var/spack/repos/scd_recipes
+    do
+       retry_check
+       rm -rf $SPACK_ROOT/var/spack/repos/scd_recipes
+    done
     spack repo add --scope=site $SPACK_ROOT/var/spack/repos/scd_recipes
 
     spack repo create $SPACK_ROOT/var/spack/repos/ups_to_spack
@@ -105,16 +135,30 @@ create_spack() {
         *github.com*) args="--depth 4" ;;
         *) args="";;
         esac
-        git clone $args  -b $spack_release $spack_repo $b
-
+        until git clone $args  -b $spack_release $spack_repo $b
+        do
+            retry_check
+            rm -rf $b
+        done
         if cd $b
         then 
             echo "make_spack: INFO: running: $add_config"
             eval "$add_config"
             export plat="target=`uname -i` os=`spack arch --operating-system`"
             spack mirror add --scope site fnal $binary_cache
-            spack buildcache update-index  -d $binary_cache
-            spack -k buildcache keys --install --trust --force
+            retries=0
+            until spack buildcache update-index  -d $binary_cache
+            do
+                retry_check
+                sleep 1
+            done
+
+            retries=0
+            until spack -k buildcache keys --install --trust --force
+            do
+                retry_check
+                sleep 1
+            done
             add_recipe_repos
             if $upgrading
             then
