@@ -49,9 +49,7 @@ bootstrap_patchelf() {
     export pdir
     mkdir $pdir
     PATH="$pdir:$PATH"
-    curl -OL https://spack-cache-1.fnal.gov/binaries/bootstrap/patchelf.linux-scientific7-x86_64
-    (file patchelf.linux-scientific7-x86_64 | grep -q ELF) || (rm -v patchelf.linux-scientific7-x86_64;curl -OL https://scisoft.fnal.gov/scisoft/spack-mirror/patchelf.linux-scientific7-x86_64 )
-    (file patchelf.linux-scientific7-x86_64 | grep -q ELF) || rm -v patchelf.linux-scientific7-x86_64
+    (curl -OJL --max-redirs 0 --silent --fail https://spack-cache-1.fnal.gov/binaries/bootstrap/patchelf.linux-scientific7-x86_64 || curl -OJL --max-redirs 0 --silent --fail  https://scisoft.fnal.gov/scisoft/spack-mirror/patchelf.linux-scientific7-x86_64) || (echo "patchelf bootstrap download failed"; exit 111)
     mv patchelf.linux-scientific7-x86_64 $pdir/patchelf
 
     chmod +x $pdir/patchelf
