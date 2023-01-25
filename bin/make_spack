@@ -109,7 +109,7 @@ add_recipe_repos() {
     retries=0
     until git clone https://github.com/marcmengel/fnal_art.git $SPACK_ROOT/var/spack/repos/fnal_art
     do
-       retry_check()
+       retry_check
        rm -rf $SPACK_ROOT/var/spack/repos/fnal_art
     done
     spack repo add --scope=site $SPACK_ROOT/var/spack/repos/fnal_art

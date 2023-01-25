@@ -3,13 +3,13 @@
 # pull down spack-infrastructure
 # use it to install
 dest=${1:-$PWD}
-ver=${2:-v2_17_01}
+ver=${2:-v2_17_01_hotfixes}
 spackver=${3:-v0.17.1.fermi}
 
 mkdir -p $dest/spack-infrastructure/$ver
 cd $dest
 
-until git clone https://github.com/marcmengel/spack-infrastructure.git spack-infrastructure/$ver/NULL/
+until git clone https://github.com/FNALssi/spack-infrastructure.git -b ${ver} spack-infrastructure/$ver/NULL/
 do
     rm -rf 
 done
