@@ -23,7 +23,6 @@ except:
         host_os = host_platform.operating_system('default_os')
         host_target = host_platform.target('default_target')
         tup = (str(host_platform), str(host_os), str(host_target))
-        platform = "_".join(tup)
         return tup
 
 
@@ -100,6 +99,7 @@ def make_spec(name, version):
        pass
 
     tfl = get_tuple()
+    platform = "-".join(tfl)
 
     namespace = "local"
     make_recipe_if_needed(namespace, name, 'PATH')
