@@ -22,7 +22,9 @@ except:
         host_platform = spack.platforms.host()
         host_os = host_platform.operating_system('default_os')
         host_target = host_platform.target('default_target')
-        return (str(host_platform), str(host_os), str(host_target))
+        tup = (str(host_platform), str(host_os), str(host_target))
+        platform = "_".join(tup)
+        return tup
 
 
 print("sys_type: %s" % repr(get_tuple()))
