@@ -44,8 +44,6 @@ libdrm
 libedit
 libevent
 libffi
-libfontenc
-libgcrypt
 libice
 libiconv
 libjpeg
@@ -76,8 +74,6 @@ libxft
 libXft
 libxi
 libXi
-libxml2
-libxmu
 libXmu
 libxpm
 libXpm
