@@ -2,6 +2,8 @@
 
 import os
 import sys
+import json
+import time
 
 # we want to use the ruamel.yaml package from spack
 sys.path.insert(1, "%s/lib/spack/external" % os.environ["SPACK_ROOT"])
@@ -22,6 +24,8 @@ except:
         host_platform = spack.platforms.host()
         host_os = host_platform.operating_system('default_os')
         host_target = host_platform.target('default_target')
+        with os.popen("spack arch --generic","r") as f:
+            host_target = f.read().strip()
         tup = (str(host_platform), str(host_os), str(host_target))
         return tup
 
@@ -39,8 +43,9 @@ def make_repo_if_needed( name ):
     f = os.popen("spack repo list","r")
     for line in f:
         if line.find(name+" ") == 0:
+             print("found repo: ", line) 
              f.close()
-             return
+             return line[line.find(' '):].strip()
     f.close()
     rd="%s/var/spack/repos/%s" % (os.environ["SPACK_ROOT"], name)
     os.system("spack repo create %s %s" % (rd, name))
@@ -88,6 +93,26 @@ wq
 """ % dict)
     f.close()
 
+
+def add_to_index(sp, hashstr, path):
+    #print("add_to_index:", repr([sp, path]))
+    inst = { 
+       "spec": sp, 
+       "ref_count": 0,
+       "path": path,
+       "installed": True,
+       "explicit": False,
+       "installation_time": time.time(),
+       "deprecated_for": None,
+    }
+    indexfn = "%s/../../../.spack-db/index.json" % os.environ["SPACK_ROOT"]
+    with open(indexfn, "r") as ifd:
+         idx = json.load(ifd)
+    assert(idx["database"]["version"] == "6")
+    idx["database"]["installs"][hashstr] = inst
+    #json.dump(idx, sys.stdout, indent=True)
+    with open(indexfn, "w") as ofd:
+        json.dump(idx, ofd)
 
 def make_spec(name, version):
 
@@ -140,6 +165,23 @@ def make_spec(name, version):
     if not os.path.exists(os.path.dirname(properdir)):
         os.makedirs(os.path.dirname(properdir))
     os.rename(curdir, properdir)
+    isp =  {
+        "name": name,
+        "hash": hashstr, 
+        "version": version,
+        "arch": {
+            "platform": tfl[0],
+            "platform_os": tfl[1],
+            "target": tfl[2],
+        },
+        "compiler": {
+            "name": compiler_l[0],
+            "version": compiler_l[1],
+        },
+        "namespace": namespace,
+        "parameters": {},
+    }
+    add_to_index( isp, hashstr,  properdir )
     os.system("spack reindex")
 
 make_spec(sys.argv[1], sys.argv[2])
