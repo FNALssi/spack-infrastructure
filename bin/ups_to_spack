@@ -963,7 +963,7 @@ endif()
 
     def install(self, spec, prefix):
         v = "v"+str(spec.version.underscored)
-        if os.path.isdir("%(prodarea)s{0}%(prodpath)s"):
+        if os.path.isdir("%(prodarea)s{0}%(prodpath)s".format(v)):
             os.system("cd %(prodarea)s{0}%(prodpath)s && find . -print | cpio -dumpv {1}".format(v, prefix))
         else:
             # UPS packages can be empty, spack wants *something* there...
@@ -978,10 +978,12 @@ endif()
                     "coroutine", "exception", "fiber", "filesystem", "graph", "graph_parallel",
                     "iostreams", "json", "locale", "log", "math", "mpi", "nowide", "program_options",
                     "python", "random", "regex", "serialization", "signals", "stacktrace", "system",
-                    "test", "thread", "timer", "type_erasure", "wave"],
+                    "test", "thread", "timer", "type_erasure", "wave" ],
                 "libxml2": ["python"],
-                "python": ["shared"],
-                "sqlite": ["column_metadata"]
+                "python": [ "bz2", "ctypes", "dbm", "debug", "libxml2", "lzma", "nis", "optimizations",
+                    "pic", "pyexpat", "pythoncmd", "readline", "shared", "sqlite3", "ssl", "tix",
+                    "tkinter", "ucs4", "uuid", "zlib" ],
+                "sqlite": ["column_metadata"],
             }
 
             if pkg.prod in vmap:
