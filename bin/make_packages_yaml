@@ -429,8 +429,8 @@ do
     echo $spp | egrep "$force_system" > /dev/null &&
     echo "    buildable: False"           >&3
   else
-    echo "Notice: no cvmfs versions found for Spack package $spp"
-    # Ensure we have an entry if we wish to constrain the target.
+    echo "Notice: no external versions found for Spack package $spp"
+    # Ensure we have an entry if we have target requirements.
     $want_force_target && preamble
   fi
 done
