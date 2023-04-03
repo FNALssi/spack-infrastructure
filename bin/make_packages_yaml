@@ -208,11 +208,16 @@ export compiler2
 
 echo "make_packages_yaml: INFO: creating $dst"
 exec 3>$dst
-echo "packages:" >&3
-
 cat <<EOF >&3
+packages:
   all:
     compiler:
+EOF
+[ -n "$compiler" ] &&
+  echo "      - $compiler" >&3
+[ -n "$compiler2" ] &&
+  echo "      - $compiler2" >&3
+cat <<EOF >&3
       - gcc
       - clang
     target:
