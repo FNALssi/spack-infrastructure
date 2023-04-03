@@ -138,6 +138,7 @@ getv2() {
   # This has some chance of finding, say, UPS packges you have setup, but
   # does help with the whole pkgconf/pkg-config silliness..
 
+  [ -n "$1" ] || return
 
   # some xyzproto packages are rolled up into the xorgproto RPM, but have documented versions...
   case "$2" in
@@ -179,11 +180,9 @@ getv2() {
 }
 
 get_cvmfs_spack_versions() {
-  if $want_cvmfs && [ -d ${cvmfs_area} ]
-  then
-      csr=${cvmfs_area}/spack/current/NULL/ 
-      SPACK_ROOT=$csr $csr/bin/spack find $1 | grep -v '^[=-]' | sed -e 's/[^ ]*@//'| sort -u # | tee /dev/tty
-  fi
+  $want_cvmfs && [ -d "$cvmfs_area" ] || return
+  csr="$cvmfs_area/spack/current/NULL/"
+  SPACK_ROOT="$csr" "$csr/bin/spack" find "$1" | grep -v '^[=-]' | sed -e 's/[^ ]*@//'| sort -u # | tee /dev/tty
 }
 
 mkdir -p `dirname $dst`
@@ -348,7 +347,7 @@ do
     esac
     ##################
     # find local version if any...
-    v=`getv2 $pkg $spp`
+    v=`getv2 "$pkg" "$spp"`
     if [ "x$v" = x ] # No base rpm
     then
       echo "Notice: no system-installed versions found for $pkg (Spack package $spp)"
