@@ -322,12 +322,6 @@ do
     deps=""
   fi
 
-  # some packages aren't on SL7 but are on SL8...
-  if [ "$os" = "scientific7" -a "$p" = "z3" ]
-  then
-    continue
-  fi
-
   # also find any cvmfs versions
   cvmfsversions=`get_cvmfs_spack_versions $spp`
 
