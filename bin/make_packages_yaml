@@ -321,6 +321,7 @@ do
 
   #variants from known variants list
   opts=`grep "^$spp[ \t]" $optf | sed -e "s/^$spp[ \t]*//"`
+  [ -n "$opts" ] && opts=" $opts"
 
   #dependencies, one needed so far on gettext
   if [ "$spp" = "gettext" ]
