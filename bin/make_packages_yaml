@@ -275,13 +275,15 @@ preamble() {
   $did_preamble && return
   did_preamble=true
   echo "  $spp:"               >&3
-  $want_force_target || return 0
-  echo "    require:"     >&3
-  echo "      - one_of: [\"target=$preferred_target\"]"     >&3
-  [ "x$compiler$compiler2" = x ] && return # Compiler hints
-  echo "      - one_of:" >&3
-  [ -z "$compiler"  ] || echo "        - \"%$compiler\"" >&3
-  [ -z "$compiler2" ] || echo "        - \"%$compiler2\"" >&3
+  if $want_force_target; then
+    echo "    require:"     >&3
+    echo "      - one_of:" >&3
+    echo "        - \"target=$preferred_target\"" >&3
+    [ "x$compiler$compiler2" = x ] && return # Compiler hints
+    echo "      - one_of:" >&3
+    [ -z "$compiler"  ] || echo "        - \"%$compiler\"" >&3
+    [ -z "$compiler2" ] || echo "        - \"%$compiler2\"" >&3
+  fi
 }
 
 for p in `grep -Eve '^[[:space:]]*#' "$src"`
