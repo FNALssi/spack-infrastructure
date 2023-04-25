@@ -50,7 +50,7 @@ optf=$dir/templates/package_opts
 dst=$1/etc/spack/$os/packages.yaml
 
 # packages to make not buildable
-force_system='^(bdftopcf|damageproto|diffutils|expat|findutils|font-util|gdbm|gettext|libc|libfontenc|libice|libx11|libxau|libxcb|libxdamage|libxdmcp|libxext|libxfixes|libxfont|libxxmu|libxpm|libxrandr|libxrender|libxshmfence|libxt|libxv|libxvmc|libxxf86vm|mesa-glu|mkfontdir|mkfontscale|openssl|pkg-config|tar|tcl|tk|xextproto|xorg-server|xproto|xproxymanagementprotocol|xrandr|xtrans|zlib)$'
+force_system='^(bdftopcf|damageproto|diffutils|expat|findutils|font-util|gdbm|gettext|libc|libfontenc|libice|libx11|libxau|libxcb|libxdamage|libxdmcp|libxext|libxfixes|libxfont|libxxmu|libxpm|libxrandr|libxrender|libxshmfence|libxt|libxv|libxvmc|libxxf86vm|mesa-glu|mkfontdir|mkfontscale|openssl|pkg-config|pkgconf|tar|tcl|tk|xextproto|xorg-server|xproto|xproxymanagementprotocol|xrandr|xtrans|zlib)$'
 
 # packages to force target (instead of merely preferred)
 force_x86_64='^(hwloc|libpciaccess|libsigsegv)$'
@@ -148,10 +148,10 @@ getv2() {
 
   # some xyzproto packages are rolled up into the xorgproto RPM, but have documented versions...
   case "$2" in
-  *proto*) 
+    *proto*) 
       ff=/usr/share/doc/xorgproto/$2.txt  
       [ -r $ff ] && x=`grep Version $ff | head -1 | sed -e 's/.*Version //'` 
-  ;;
+      ;;
   esac
   if [ "$x" = "" ]
   then
