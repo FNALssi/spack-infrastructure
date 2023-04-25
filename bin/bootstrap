@@ -24,7 +24,6 @@ parse_args() {
         x--) shift; break;;
         esac
     done
-    echo "after while: args $*"
     dest=${1:-$PWD}
     ver=${2:-$default_spack_infrastructure_version}
     spack_version=${3:-$default_spack_version}
@@ -105,7 +104,7 @@ main() {
 
     spack compiler find --scope=site
 
-    spack install spack-infrastructure@$ver
+    cd $dest/spack-infrastructure/$ver/NULL && bin/declare_simple spack-infrastructure $ver
 
     check_bootstrap
 }
