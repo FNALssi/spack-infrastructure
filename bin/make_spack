@@ -164,6 +164,7 @@ usage(){
         echo "  --upgrade"
         echo "  --no-buildcache"
         echo "  --spack_release ver"
+        echo "  --spack_repo url"
         echo "  --minimal"
         echo "  make a spack instance with given layout"
         echo ""
@@ -195,9 +196,9 @@ parse_args() {
         x--with_padding)        padding=true; shift ;;
         x--upgrade)             upgrading=true; shift;;
         x--spack_release)       spack_release=$2; shift; shift ;;
+        x--spack_repo)          spack_repo=$2; shift; shift;;
         x--minimal)             minimal=true; shift ;;
         x--no_buildcache)       use_buildcache=false; shift;;
-        x--spack_repo)          spack_repo=$2; shift; shift;;
         x-u)                    layout=unified; shift;;
         x-t)                    layout=traditional; shift;;
         x-p)                    layout=plain; shift;;
