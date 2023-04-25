@@ -4,11 +4,13 @@
 
 usage() {
   cat <<EOF
-usage: bootstrap [--with_padding] [--help] [dest_dir] [spack_infrastructure_version] [spack_version]
+usage: bootstrap [--with_padding] [--help] [dest_dir] [spack_infrastructure_version] [spack_version] [spack_repo]
 EOF
 }
+# note, other scripts pull these values for defaults
 default_spack_infrastructure_version=master
 default_spack_version=v0.19.fermi
+default_spack_repo=https://github.com/FNALssi/spack.git
 
 parse_args() {
     with_padding=""
@@ -25,7 +27,8 @@ parse_args() {
     echo "after while: args $*"
     dest=${1:-$PWD}
     ver=${2:-$default_spack_infrastructure_version}
-    spackver=${3:-$default_spack_version}
+    spack_version=${3:-$default_spack_version}
+    spack_repo=${4:-$default_spack_repo}
 }
 
 detail_log() {
@@ -95,14 +98,14 @@ main() {
     PATH=$dest/spack-infrastructure/$ver/NULL/bin:$PATH
 
     message "Setting up with make_spack"
-    make_spack --spack_release $spackver $with_padding --minimal -u $dest
+    make_spack --spack_release $spack_version --spack_repo $spack_repo $with_padding --minimal -u $dest
 
     message "Finding compilers"
     source $dest/setup-env.sh
 
     spack compiler find --scope=site
 
-    cd $dest/spack-infrastructure/$ver/NULL && bin/declare_simple spack-infrastructure $ver
+    spack install spack-infrastructure@$ver
 
     check_bootstrap
 }
