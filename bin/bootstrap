@@ -39,6 +39,7 @@ parse_args() {
         x--spack_infrastructure_repo)    spack_infrastructure_repo=$2; shift; shift ;;
         x--help) usage; exit;;
         x--) shift; break;;
+        x-*) echo "Unknown argument: $1"; usage; exit 1;;
         esac
     done
     dest=${1:-$PWD}
