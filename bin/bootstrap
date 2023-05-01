@@ -24,6 +24,11 @@ default_spack_infrastructure_repo=https://github.com/FNALssi/spack-infrastructur
 parse_args() {
     with_padding=""
     eval set : $(getopt --longoptions with_padding,help,spack_infrastructure_release:,spack_release:,spack_repo:,spack_infrastructure_repo: -- x "$@")
+    if [ "$*" = ": --" ]
+    then
+        usage
+        exit 1
+    fi
     shift
     spack_repo=$default_spack_repo
     spack_infrastructure_repo=$default_spack_infrastructure_repo
@@ -39,7 +44,6 @@ parse_args() {
         x--spack_infrastructure_repo)    spack_infrastructure_repo=$2; shift; shift ;;
         x--help) usage; exit;;
         x--) shift; break;;
-        x-*) echo "Unknown argument: $1"; usage; exit 1;;
         esac
     done
     dest=${1:-$PWD}
@@ -100,7 +104,7 @@ check_bootstrap() {
 }
 
 main() {
-    parse_args "$@"
+    parse_args "$@" 
 
     detail_log
     mkdir -p $dest/spack-infrastructure/$ver
